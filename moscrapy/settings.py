@@ -15,8 +15,7 @@ SPIDER_MODULES = ['moscrapy.spiders']
 NEWSPIDER_MODULE = 'moscrapy.spiders'
 
 ITEM_PIPELINES={
-    'moscrapy.pipelines.DoubanSpiderPipeline':200,
-    'moscrapy.pipelines.DoubanMovieSpiderPipeline': 210,
+    'moscrapy.pipelines.DoubanMovieSpiderPipeline': 200,
     'moscrapy.pipelines.TestSpiderPipeline':500,
 }
 
