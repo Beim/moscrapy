@@ -27,7 +27,11 @@ user_agent_list = [
 
 def get_random_proxy(type='HTTP'):
     # url = 'http://119.29.160.85:8899/api/v1/proxies?limit=10'
-    url = 'http://119.29.160.85:8899/api/v1/proxies?limit=10&anonymous=true&page=%d' % random.randint(2, 30)
+    if type == 'HTTPS':
+        randmax = 60
+    else:
+        randmax = 5
+    url = 'http://119.29.160.85:8899/api/v1/proxies?limit=10&anonymous=true&page=%d' % random.randint(2, randmax)
     if type == 'HTTPS': url = url + '&https=true'
     res = requests.get(url)
     jsondata = json.loads(res.content.decode('utf-8'))
