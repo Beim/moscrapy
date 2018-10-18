@@ -17,7 +17,7 @@ class DoubanSpider(Spider):
         tagres = res[0]
         item = DoubanItem()
         item['from_tag'] = tagres.name
-        request = Request(self.doubanApi.get_search_movies_by_tag_url(tagres.name, page_start=0), callback=self.parse)
+        request = Request(self.doubanApi.get_search_movies_by_tag_url(tagres.name, page_start=0), callback=self.parse, priority=0)
         request.meta['item'] = item
         request.meta['tagres'] = tagres
         request.meta['page_start'] = 0
@@ -38,13 +38,13 @@ class DoubanSpider(Spider):
                 nitem = item.copy()
                 movie_id = movie['id']
                 nitem['movie_info'] = {'doubanId': movie_id}
-                request = Request(self.doubanApi.get_subject_by_id_url(movie_id), callback=self.parse_movie_info)
+                request = Request(self.doubanApi.get_subject_by_id_url(movie_id), callback=self.parse_movie_info, priority=1)
                 request.meta['item'] = nitem
                 yield request
             # next page
             next_page_start = page_start + 20
             nitem = item.copy()
-            request = Request(self.doubanApi.get_search_movies_by_tag_url(tagres.name, page_start=next_page_start), callback=self.parse)
+            request = Request(self.doubanApi.get_search_movies_by_tag_url(tagres.name, page_start=next_page_start), callback=self.parse, priority=0)
             request.meta['item'] = nitem
             request.meta['tagres'] = tagres
             request.meta['page_start'] = next_page_start
@@ -75,7 +75,7 @@ class DoubanSpider(Spider):
             directors_info.append({'doubanId': director['id']})
         item['director_info'] = directors_info
 
-        request = Request(movie_url, callback=self.parse_movie_website)
+        request = Request(movie_url, callback=self.parse_movie_website, priority=2)
         request.meta['item'] = item
         yield request
 
@@ -122,7 +122,7 @@ class DoubanSpider(Spider):
         if len(item['actor_info']) > 0:
             actor_info = item['actor_info'][0]
             doubanId = actor_info['doubanId']
-            request = Request(self.doubanApi.get_celebrity_by_id_url(doubanId), callback=self.parse_actor_info)
+            request = Request(self.doubanApi.get_celebrity_by_id_url(doubanId), callback=self.parse_actor_info, priority=2)
             request.meta['item'] = item
             request.meta['actor_info_index'] = 0
             yield request
@@ -144,7 +144,7 @@ class DoubanSpider(Spider):
         actor_info_index = actor_info_index + 1
         if actor_info_index < len(item['actor_info']):
             doubanId = item['actor_info'][actor_info_index]['doubanId']
-            request = Request(self.doubanApi.get_celebrity_by_id_url(doubanId), callback=self.parse_actor_info)
+            request = Request(self.doubanApi.get_celebrity_by_id_url(doubanId), callback=self.parse_actor_info, priority=2)
             request.meta['item'] = item
             request.meta['actor_info_index'] = actor_info_index
             yield request
@@ -152,7 +152,7 @@ class DoubanSpider(Spider):
             if len(item['director_info']) > 0:
                 director_info = item['director_info'][0]
                 doubanId = director_info['doubanId']
-                request = Request(self.doubanApi.get_celebrity_by_id_url(doubanId), callback=self.parse_director_info)
+                request = Request(self.doubanApi.get_celebrity_by_id_url(doubanId), callback=self.parse_director_info, priority=2)
                 request.meta['item'] = item
                 request.meta['director_info_index'] = 0
                 yield request
@@ -173,7 +173,7 @@ class DoubanSpider(Spider):
         director_info_index = director_info_index + 1
         if director_info_index < len(item['director_info']):
             doubanId = item['director_info'][director_info_index]['doubanId']
-            request = Request(self.doubanApi.get_celebrity_by_id_url(doubanId), callback=self.parse_director_info)
+            request = Request(self.doubanApi.get_celebrity_by_id_url(doubanId), callback=self.parse_director_info, priority=2)
             request.meta['item'] = item
             request.meta['director_info_index'] = director_info_index
             yield request
@@ -186,7 +186,7 @@ class DoubanSpider(Spider):
             tagres = res[0]
             item = DoubanItem()
             item['from_tag'] = tagres.name
-            request = Request(self.doubanApi.get_search_movies_by_tag_url(tagres.name, page_start=0), callback=self.parse)
+            request = Request(self.doubanApi.get_search_movies_by_tag_url(tagres.name, page_start=0), callback=self.parse, priority=0)
             request.meta['item'] = item
             request.meta['tagres'] = tagres
             request.meta['page_start'] = 0
