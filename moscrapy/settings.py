@@ -14,6 +14,8 @@ BOT_NAME = 'moscrapy'
 SPIDER_MODULES = ['moscrapy.spiders']
 NEWSPIDER_MODULE = 'moscrapy.spiders'
 
+DOWNLOAD_TIMEOUT = 20
+
 ITEM_PIPELINES={
     'moscrapy.pipelines.DoubanDirectorInfoSpiderPipeline': 200,
     'moscrapy.pipelines.DoubanActorInfoSpiderPipeline': 200,
