@@ -10,7 +10,7 @@ from moscrapy.db.dbpeewee import Movie, Genre, Actor, Director, MovieToActor, Mo
 
 class MoscrapyPipeline(object):
     def process_item(self, item, spider):
-        print(item)
+        # print(item)
         return item
 
 class TestSpiderPipeline(object):
@@ -19,6 +19,79 @@ class TestSpiderPipeline(object):
         # with open('./test.txt', 'w') as f:
         #     f.write(item['from_tag'])
         return item
+
+class DoubanActorInfoSpiderPipeline(object):
+    def process_item(self, item, spider):
+        if spider.name != 'douban_actor_info_spider': return item
+        Actor.update({
+            'name': item['name'],
+            'bornPlace': item['bornPlace'],
+            'dataFrom': item['dataFrom'],
+            'foreignName': item['foreignName'],
+            'gender': item['gender']
+        }).where(Actor.id == item['id']).execute()
+
+class DoubanDirectorInfoSpiderPipeline(object):
+    def process_item(self, item, spider):
+        if spider.name != 'douban_director_info_spider': return item
+        Director.update({
+            'name': item['name'],
+            'bornPlace': item['bornPlace'],
+            'dataFrom': item['dataFrom'],
+            'foreignName': item['foreignName'],
+            'gender': item['gender']
+        }).where(Director.id == item['id']).execute()
+
+class DoubanMovieInfoSpiderPipeline(object):
+    def process_item(self, item, spider):
+        if spider.name != 'douban_movie_info_spider': return item
+
+        Movie.update({
+            'name': item['name'],
+            'language': item['language'],
+            'place': item['place'],
+            'description': item['description'],
+            'dataFrom': item['dataFrom'],
+            'year': item['year'],
+            'originalName': item['originalName']
+        }).where(Movie.id == item['id']).execute()
+
+        # insert resource
+        resource_info_list = item['resource_info']
+        for resource_info in resource_info_list:
+            resource_info['movieId'] = item['id']
+            Resource.create(**resource_info)
+
+        # insert genre
+        genre_info_list = item['genre_info']
+        for genre_name in genre_info_list:
+            genre_info = {'name': genre_name}
+            genre_record = Genre.insert_genre(genre_info)
+
+            movie_to_genre_info = {'movieId': item['id'], 'genreId': genre_record.id}
+            MovieToGenre.insert_movie_to_genre(movie_to_genre_info)
+
+        # insert actor
+        actor_info_list = item['actor_info']
+        for actor_info in actor_info_list:
+            actor_record = Actor.insert_actor(actor_info)
+
+            movie_to_actor_info = {'movieId': item['id'], 'actorId': actor_record.id}
+            MovieToActor.insert_movie_to_actor(movie_to_actor_info)
+
+        # insert director
+        director_info_list = item['director_info']
+        for director_info in director_info_list:
+            director_record = Director.insert_director(director_info)
+
+            movie_to_director_info = {'movieId': item['id'], 'directorId': director_record.id}
+            MovieToDirector.insert_movie_to_director(movie_to_director_info)
+
+
+class DoubanMovieSubjectSpiderPipeline(object):
+    def process_item(self, item, spider):
+        if spider.name != 'douban_movie_subject_spider': return item
+        Movie.insert_movie({'doubanId': item['douban_id']})
 
 class DoubanMovieSpiderPipeline(object):
     def process_item(self, item, spider):

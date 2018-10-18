@@ -1,6 +1,6 @@
 from peewee import *
 
-db = MySQLDatabase("modemo", host="119.29.160.85", user="root",passwd="112223334")
+db = MySQLDatabase("modemo2", host="119.29.160.85", user="root",passwd="112223334")
 
 class BaseModel(Model):
     class Meta:
@@ -65,13 +65,22 @@ class Movie(BaseModel):
             movie_record = Movie.create(**movie_info)
             is_new = 1
         except IntegrityError:
-            movie_record = Movie.select().where(Movie.name == movie_info['name']).get()
+            if 'name' in movie_info:
+                movie_record = Movie.select().where(Movie.name == movie_info['name']).get()
+            elif 'doubanId' in movie_info:
+                movie_record = Movie.select().where(Movie.doubanId == movie_info['doubanId']).get()
+            else:
+                movie_record = None
             is_new = 0
         return movie_record, is_new
 
 class MovieToActor(BaseModel):
     movieId = IntegerField()
     actorId = IntegerField()
+
+    class Meta:
+        database = db
+        table_name = 'movieToActor'
 
     def insert_movie_to_actor(info):
         try:
@@ -82,7 +91,11 @@ class MovieToActor(BaseModel):
 
 class MovieToDirector(BaseModel):
     movieId = IntegerField()
-    actorId = IntegerField()
+    directorId = IntegerField()
+
+    class Meta:
+        database = db
+        table_name = 'movieToDirector'
 
     def insert_movie_to_director(info):
         try:
@@ -94,6 +107,10 @@ class MovieToDirector(BaseModel):
 class MovieToGenre(BaseModel):
     movieId = IntegerField()
     genreId = IntegerField()
+
+    class Meta:
+        database = db
+        table_name = 'movieToGenre'
 
     def insert_movie_to_genre(info):
         try:
@@ -133,6 +150,12 @@ class Test(BaseModel):
 
 if __name__ == '__main__':
     pass
+    # Movie.update({'name': '2'}).where(Movie.doubanId == 3541415).execute()
+
+    # res = Movie.select().where(Movie.name == None)
+    # for r in res:
+    #     print(r.doubanId)
+
     # g = Genre.create(name='g5')
     # print(g)
 
