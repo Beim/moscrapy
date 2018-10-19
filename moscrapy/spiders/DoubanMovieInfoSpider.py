@@ -61,9 +61,12 @@ class DoubanMovieInfoSpider(Spider):
 
         # extract tags
         tags = []
-        for a_tag in soup.find('div', class_='tags-body').find_all('a'):
-            tag = a_tag.text.strip()
-            tags.append(tag)
+        try:
+            for a_tag in soup.find('div', class_='tags-body').find_all('a'):
+                tag = a_tag.text.strip()
+                tags.append(tag)
+        except:
+            pass
         inserted_tags = []
         with db.atomic():
             for tag in tags:
