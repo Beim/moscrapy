@@ -76,13 +76,16 @@ class DoubanMovieInfoSpider(Spider):
         # extract play info
         item['resource_info'] = []
         if soup.find('ul', class_='bs') != None:
-            src_list = soup.find('ul', class_='bs').find_all('li')
-            for src in src_list:
-                price = src.find('span').text.strip()
-                platform = src.find('a')['data-cn']
-                url = src.find('a')['href']
-                item['resource_info'].append({
-                    'price': price, 'platform': platform, 'url': url, 'dataFrom': response.url
-                })
+            try:
+                src_list = soup.find('ul', class_='bs').find_all('li')
+                for src in src_list:
+                    price = src.find('span').text.strip()
+                    platform = src.find('a')['data-cn']
+                    url = src.find('a')['href']
+                    item['resource_info'].append({
+                        'price': price, 'platform': platform, 'url': url, 'dataFrom': response.url
+                    })
+            except:
+                pass
 
         yield item
