@@ -37,12 +37,14 @@ class DoubanMovieInfoSpider(Spider):
 
         actors_info = []
         for actor in movie_info['casts']:
-            actors_info.append({'doubanId': actor['id']})
+            if actor['id'] != None:
+                actors_info.append({'doubanId': actor['id']})
         item['actor_info'] = actors_info
 
         directors_info = []
         for director in movie_info['directors']:
-            directors_info.append({'doubanId': director['id']})
+            if director['id'] != None:
+                directors_info.append({'doubanId': director['id']})
         item['director_info'] = directors_info
 
         request = Request(movie_url, callback=self.parse_movie_website, priority=2)
@@ -52,7 +54,10 @@ class DoubanMovieInfoSpider(Spider):
     def parse_movie_website(self, response):
         item = response.meta['item']
         soup = BeautifulSoup(response.body, 'lxml')
-        item['language'] = soup.find_all('div', id='info')[0].find_all('span', text='语言:')[0].next_sibling.strip()
+        try:
+            item['language'] = soup.find_all('div', id='info')[0].find_all('span', text='语言:')[0].next_sibling.strip()
+        except:
+            pass
 
         # extract tags
         tags = []
