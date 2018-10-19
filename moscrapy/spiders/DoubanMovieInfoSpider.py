@@ -57,7 +57,7 @@ class DoubanMovieInfoSpider(Spider):
         try:
             item['language'] = soup.find_all('div', id='info')[0].find_all('span', text='语言:')[0].next_sibling.strip()
         except:
-            pass
+            item['language'] = None
 
         # extract tags
         tags = []
