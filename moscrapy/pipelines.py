@@ -23,38 +23,33 @@ class TestSpiderPipeline(object):
 class DoubanActorInfoSpiderPipeline(object):
     def process_item(self, item, spider):
         if spider.name != 'douban_actor_info_spider': return item
-        Actor.update({
-            'name': item['name'],
-            'bornPlace': item['bornPlace'],
-            'dataFrom': item['dataFrom'],
-            'foreignName': item['foreignName'],
-            'gender': item['gender']
-        }).where(Actor.id == item['id']).execute()
+        actor_update_obj = {}
+        keys = ['name', 'bornPlace', 'dataFrom', 'foreignName', 'gender']
+        for key in keys:
+            if item[key] != None and item[key] != '':
+                actor_update_obj[key] = item[key]
+        Actor.update(actor_update_obj).where(Actor.id == item['id']).execute()
 
 class DoubanDirectorInfoSpiderPipeline(object):
     def process_item(self, item, spider):
         if spider.name != 'douban_director_info_spider': return item
-        Director.update({
-            'name': item['name'],
-            'bornPlace': item['bornPlace'],
-            'dataFrom': item['dataFrom'],
-            'foreignName': item['foreignName'],
-            'gender': item['gender']
-        }).where(Director.id == item['id']).execute()
+        director_update_obj = {}
+        keys = ['name', 'bornPlace', 'dataFrom', 'foreignName', 'gender']
+        for key in keys:
+            if item[key] != None and item[key] != '':
+                director_update_obj[key] = item[key]
+        Director.update(director_update_obj).where(Director.id == item['id']).execute()
 
 class DoubanMovieInfoSpiderPipeline(object):
     def process_item(self, item, spider):
         if spider.name != 'douban_movie_info_spider': return item
 
-        Movie.update({
-            'name': item['name'],
-            'language': item['language'],
-            'place': item['place'],
-            'description': item['description'],
-            'dataFrom': item['dataFrom'],
-            'year': item['year'],
-            'originalName': item['originalName']
-        }).where(Movie.id == item['id']).execute()
+        movie_update_obj = {}
+        keys = ['name', 'language', 'place', 'description', 'dataFrom', 'year', 'originalName']
+        for key in keys:
+            if item[key] != None and item[key] != '':
+                movie_update_obj[key] = item[key]
+        Movie.update(movie_update_obj).where(Movie.id == item['id']).execute()
 
         # insert resource
         resource_info_list = item['resource_info']
