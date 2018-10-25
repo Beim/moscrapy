@@ -29,6 +29,8 @@ class DoubanMovieInfoSpider(Spider):
         item['dataFrom'] = response.url
         item['name'] = movie_info['title']
         item['year'] = movie_info['year']
+        if '-' in item['year']:
+            item['year'] = item['year'].split('-')[0]
         item['originalName'] = movie_info['original_title']
         item['place'] = ' '.join(movie_info['countries'])
         item['description'] = movie_info['summary']
