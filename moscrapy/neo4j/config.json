@@ -1,0 +1,8 @@
+{
+    "dim": 10,
+    "batch_size": 20,
+    "learning_rate": 0.01,
+    "margin": 1,
+    "max_epoch": 100000,
+    "threshold": 0.01
+}

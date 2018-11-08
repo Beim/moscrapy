@@ -2,6 +2,7 @@ import json
 import random
 import tensorflow as tf
 import math
+import time
 
 class TransE_tf():
 
@@ -42,7 +43,7 @@ class TransE_tf():
             for step in range(self.max_epoch):
                 triple_ids, corrupted_triple_ids = self.next_batch(self.batch_size)
                 r, _ = sess.run([loss, optimizer], feed_dict={triples: triple_ids, corrupted_triples: corrupted_triple_ids})
-                if step % 1000 == 0: print('step %d, loss = %s' % (step, r))
+                if step % 1000 == 0: print('step %d, loss = %s, %s' % (step, r, time.asctime()))
                 if (r < self.threshold and r != 0):
                     print('step %d, loss = %s' % (step, r))
                     break
@@ -74,18 +75,13 @@ def run(triples, entities, relations, triple_idc):
                 corrupted_triple_ids.append(ctriple)
         return triple_ids, corrupted_triple_ids
 
-    config = {
-        'entity_size': len(entities),
-        'relation_size': len(relations),
-        'dim': 100,
-        'batch_size': 1000,
-        'learning_rate': 0.01,
-        'margin': 1,
-        'max_epoch': 100000,
-        'threshold': 0.01,
-    }
+    with open('./config.json', 'r') as f:
+        config = json.load(f)
+    config['entity_size'] = len(entities)
+    config['relation_size'] = len(relations)
     transE_tf = TransE_tf(config, next_batch)
     transE_tf.train()
+
 
 def get_triples_from_json():
     with open('./triples.json', 'r') as f:
