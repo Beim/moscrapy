@@ -41,8 +41,7 @@ class TransE_tf():
             sess.run(init)
             for step in range(self.max_epoch):
                 triple_ids, corrupted_triple_ids = self.next_batch(self.batch_size)
-                with tf.device('/device:GPU:0'):
-                    r, _ = sess.run([loss, optimizer], feed_dict={triples: triple_ids, corrupted_triples: corrupted_triple_ids})
+                r, _ = sess.run([loss, optimizer], feed_dict={triples: triple_ids, corrupted_triples: corrupted_triple_ids})
                 if step % 1000 == 0: print('step %d, loss = %s' % (step, r))
                 if (r < self.threshold and r != 0):
                     print('step %d, loss = %s' % (step, r))
@@ -78,8 +77,8 @@ def run(triples, entities, relations, triple_idc):
     config = {
         'entity_size': len(entities),
         'relation_size': len(relations),
-        'dim': 10,
-        'batch_size': 10,
+        'dim': 100,
+        'batch_size': 1000,
         'learning_rate': 0.01,
         'margin': 1,
         'max_epoch': 100000,
