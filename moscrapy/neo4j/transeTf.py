@@ -37,11 +37,12 @@ class TransE_tf():
         optimizer = tf.train.AdagradOptimizer(self.learning_rate).minimize(loss)
 
         init = tf.global_variables_initializer()
-        with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
+        with tf.Session(config=tf.ConfigProto(log_device_placement=False)) as sess:
             sess.run(init)
             for step in range(self.max_epoch):
                 triple_ids, corrupted_triple_ids = self.next_batch(self.batch_size)
-                r, _ = sess.run([loss, optimizer], feed_dict={triples: triple_ids, corrupted_triples: corrupted_triple_ids})
+                with tf.device('/device:GPU:0'):
+                    r, _ = sess.run([loss, optimizer], feed_dict={triples: triple_ids, corrupted_triples: corrupted_triple_ids})
                 if step % 1000 == 0: print('step %d, loss = %s' % (step, r))
                 if (r < self.threshold and r != 0):
                     print('step %d, loss = %s' % (step, r))
